@@ -4,23 +4,24 @@ import sys
 '''
 
 '''
-# and and r'[a-z]+'
 def passwordDetection(password):
-    passwordRegex=re.compile(r'\w{8}'and r'\d+')# check for 8 char length and atleast 1 digit
-    mo=passwordRegex.search(password)
+    re1=re.compile(r'[^\n\r\f]{8}' )# check for 8 char length
+    re2=re.compile(r'[A-Z]+')#Check for atleast 1 uppercase letter
+    re3=re.compile(r'[a-z]+')#Check for atleast 1 lowercase letter
+    re4=re.compile(r'(\d+)')#Check for atleast 1 number
+     
+    passwordregex=[re1,re2,re3,re4]
+    mobjects=[]
+    for regex in passwordregex:
+        mobjects.append(regex.search(password))
 
-    if mo!=None:
-        passwordRegex2=re.compile(r'[A-Z]+')#Check for atleast 1 uppercase letter
-        mo2=passwordRegex2.search(password)
-        if mo2!=None:
-            passwordRegex3=re.compile(r'[a-z]+')#Check for atleast 1 lowercase letter
-            mo3=passwordRegex3.search(password)
-            if mo3!=None:
-                print("Your password is strong")
-                sys.stdout.flush()
-    if mo==None or mo2==None or mo3==None:     #If conditions aren't met let user know 
+    if all(e!=None for e in mobjects):
+        print("Your password is strong")
+        sys.stdout.flush()
+    #If conditions aren't met let user know 
+    else:    
         print('''Your password can be improved:
-                 1.Minimum 8 characters in length (including symbols)
+                 1.Minimum 8 characters in length (including symbols and whitespace)
                  2.Atleast 1 number
                  3.Atleast 1 uppercase letter
                  4.Atleast 1 lowercase letter
