@@ -1,6 +1,5 @@
 #! python3
-import re
-import sys
+import re,sys,tryagain
 '''
 
 '''
@@ -33,22 +32,10 @@ if __name__=='__main__':
     while True:
         password=input("Please enter a password to be validated: ")
         passwordDetection(password)
-        while True:
-            try:
-                tryagain=str(input("Try again (Y/N)?: "))
-                if tryagain=='Y'or tryagain=='y':
-                    break
-                elif tryagain=='N'or tryagain=='n':
-                    break
-                else:
-                    raise ValueError
-                    print("Unaccepted input")
-                    sys.stdout.flush()
-            except ValueError:
-                continue
-        if tryagain=='Y'or tryagain=='y':
-            continue
-        elif tryagain=='N'or tryagain=='n':
+        
+        if tryagain.loop()==False:
             break
+            if tryagain.loop()==True:
+                continue
         
     
