@@ -33,9 +33,8 @@ if __name__=='__main__':
         password=input("Please enter a password to be validated: ")
         passwordDetection(password)
         
-        if tryagain.loop()==False:
+        if tryagain.loop()==True:
+            continue
+        else:
             break
-            if tryagain.loop()==True:
-                continue
-        
     
