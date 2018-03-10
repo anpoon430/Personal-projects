@@ -11,3 +11,6 @@ pwcheck.py uses the module tryagain.py to allow the user to continue running the
 
 ## tryagain.py
 Is a program that loops to ask if the user wants to re-run a program or not. Since this is such a common requirement for all programs, I have made it into a separate module that can be reused in my other programs
+
+## regexsearch.py
+This program searches all text files within a specified folder for a user-supplied regular expression. It then returns all matches for each text file and prints it to the screen.
