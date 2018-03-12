@@ -16,14 +16,16 @@ def page(jobpage):
     linkElems=linkSoup.select('.job-title a')
         
     print("Scraping job listings...")
-    links=[]  #accumulated list of all job posting links
+    links=list()  #accumulated list of all job posting links
     
     for link in linkElems:
         links.append(link.get('href'))
-    title,company,companyDetails,posting=[],[],[],[]
-    data={}
-    datalist=[data]
+        
+    title,company,companyDetails,posting=list(),list(),list(),list()
+    data=dict()
+    datalist=list(data)
     print('Scraping information from each listing...')
+    
     for e in links:
         res=requests.get(e,headers=headers,timeout=5)
         res.raise_for_status()
@@ -55,7 +57,8 @@ def page(jobpage):
         data['posting']=data.get('posting',posting)
         
         datalist.append(data)
-    
+        print(e)
+        print(data['title'])
         time.sleep(1)
     return datalist
 
@@ -67,10 +70,12 @@ def looppages(job_page):
     soup=bs4.BeautifulSoup(res.text,"lxml")
   
     pagecount=0
-    accumdata={}
-    accumdatalist=[accumdata] 
+    #accumdata=dict()
+    accumdatalist=list() 
     while soup.find(class_='CurrentPage'+str(pagecount+1))!=None:
-        accumdatalist.extend(page(job_page))
+        datafromapage=page(job_page)
+        print('datafromapage: '+str(datafromapage))
+        accumdatalist.extend(datafromapage)
         print('Page '+str(pagecount+1)+' done')
         pagecount=pagecount+1
         job_page=soup.find(class_='CurrentPage'+str(pagecount)).get('href')
@@ -79,14 +84,14 @@ def looppages(job_page):
     
 if __name__=='__main__':
     job_page="https://hk.jobsdb.com/hk/jobs/entry-level?KeyOpt=COMPLEX&JSRV=1&RLRSF=1&JobCat=1&SearchFields=Positions%2cCompanies&Key=data&Career=4&JSSRC=JSRAS&keepExtended=1"
-    jobdata=looppages(job_page)
+    #jobdata=looppages(job_page)
     
-    with open('jobdata.csv', 'w', newline='') as csvfile:
-        keys=jobdata[0].keys()
-        writer = csv.DictWriter(csvfile, keys)
-        writer.writeheader()
-        writer.writerows(jobdata)
-        
+    #with open('jobdata.csv', 'w', newline='') as csvfile:
+   #     keys=jobdata[0].keys()
+    #    writer = csv.DictWriter(csvfile, fieldnames=keys)
+     #   writer.writeheader()
+    #    writer.writerows(jobdata)
+    print (page(job_page))    
     print('finished')
     
     
