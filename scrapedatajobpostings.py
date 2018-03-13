@@ -3,32 +3,31 @@ Created on Sat Mar 10 23:36:40 2018
 
 @author: Andy Poon
 """
-import requests,os,bs4,time,csv,copy,io
-#from selenium import webdriver
+import requests,os,bs4,time,csv
 
-def page(jobpage):
+def page(page_url):
     headers={'user-agent':'''Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36'''
             }
-    res=requests.get(job_page,headers=headers,timeout=5)
+    res=requests.get(page_url,headers=headers,timeout=5)
     res.raise_for_status()
-    linkSoup=bs4.BeautifulSoup(res.text,"lxml")
+    linkSoup=bs4.BeautifulSoup(res.text,"html.parser")
     
     
     linkElems=linkSoup.select('.job-title a')
         
-    print("Scraping job listings...")
+    print("Scraping job listings for: "+str(page_url))
     links=list()  #accumulated list of all job posting links
     
     for link in linkElems:
         links.append(link.get('href'))
     data=dict()
-    #datalist=list()
-    for e in links:
+    
+    for e in links:  #loops through each job listing and writes data into csv file
 
         res=requests.get(e,headers=headers,timeout=5)
         res.raise_for_status()
     
-        soup=bs4.BeautifulSoup(res.text,"lxml")
+        soup=bs4.BeautifulSoup(res.text,"html.parser")
         
         
         data['url']=data.get('url',e)
@@ -57,64 +56,48 @@ def page(jobpage):
             posting='N/A'
         data['posting']=data.get('posting',posting)
         
-        #datalist.append(data.copy())
+        if soup.find('meta',itemprop='datePosted')!=None:
+            date=soup.find('meta',itemprop='datePosted').get('content')[:10]#extract date only, no time
+        else:
+            date='N/A'
+        data['date']=data.get('date',date)
         
-        #file=open('jobdata.csv','a', encoding= 'utf-9',newline='')
         file_exists=os.path.exists('jobdata.csv')
     
         with open('jobdata.csv','a', encoding= 'utf-8',newline='')as csvfile:
-            keys=data.keys()
-            writer=csv.DictWriter(csvfile,fieldnames=keys)
+            fieldnames=['date','company','company info','title','posting','url']
+            writer=csv.DictWriter(csvfile,fieldnames=fieldnames)
             if not file_exists:
                 writer.writeheader()
             writer.writerow(data)
         
         data.clear()
-        
         time.sleep(1)
+        
+    
     #return datalist
 
-def looppages(job_page):
-    headers={'user-agent':'''Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36'''
-            }
-    res=requests.get(job_page,headers=headers,timeout=5)
-    res.raise_for_status()
-    soup=bs4.BeautifulSoup(res.text,"lxml")
-  
+def looppages(current_page):  
     pagecount=0
-
-    #accumdatalist=list() 
     
-    
-    ### NOT OPENING NEW PAGE PROPERLY## 
-    while soup.find(class_='CurrentPage'+str(pagecount+1))!=None: #check next page exists
+    while pagecount<5: # total number of pages=5
         
-        #print('datafromapage: '+str(datafromapage))
-        #accumdatalist.extend(datafromapage)
-        page(job_page)
-        print('Page '+str(pagecount+1)+' done')
+        page(current_page)
+        
+        print('Page '+str(pagecount+1)+' done') #pagecount starts at 0 so need +1 before this statement
         pagecount=pagecount+1
-        #job_page=soup.find(class_='CurrentPage'+str(pagecount)).get('href')##investigate
-        joblinklist=soup.select('.CurrentPage'+str(pagecount)+' a')
-        job_page=joblinklist[0].get('href')
-        print(job_page)
-    #return accumdatalist
+        next_page=current_page[:-1]+str(pagecount)#strip lastnum of url and replace with new url
+        current_page=next_page
+     
     
 if __name__=='__main__':
-    job_page="https://hk.jobsdb.com/hk/jobs/entry-level?KeyOpt=COMPLEX&JSRV=1&RLRSF=1&JobCat=1&SearchFields=Positions%2cCompanies&Key=data&Career=4&JSSRC=JSRAS&keepExtended=1"
-    #jobdata=looppages(job_page)
+    job_page="https://hk.jobsdb.com/hk/jobs/entry-level?AD=30&Blind=1&Career=4&Host=J%2cS&JobCat=1&JSRV=1&Key=data&KeyOpt=COMPLEX&SearchFields=Positions%2cCompanies&page=0"
     
-    #with open('jobdata.csv', 'w', newline='') as csvfile:
-    #    keys=jobdata[0].keys()
-    #    writer = csv.DictWriter(csvfile, fieldnames=keys)
-    #    writer.writeheader()
-    #    writer.writerows(jobdata)
     original_path=os.getcwd()
     target_path=r"C:\Users\Andy\Documents\Coding stuff\Projects"
     os.chdir(target_path)
     
-    looppages(job_page)
-    #print(page(job_page)[10])    
+    looppages(job_page)    
     
     print('finished')
     
