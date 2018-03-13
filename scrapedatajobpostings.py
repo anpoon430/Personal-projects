@@ -85,6 +85,8 @@ def looppages(job_page):
 
     #accumdatalist=list() 
     
+    
+    ### NOT OPENING NEW PAGE PROPERLY## 
     while soup.find(class_='CurrentPage'+str(pagecount+1))!=None: #check next page exists
         
         #print('datafromapage: '+str(datafromapage))
@@ -92,8 +94,10 @@ def looppages(job_page):
         page(job_page)
         print('Page '+str(pagecount+1)+' done')
         pagecount=pagecount+1
-        job_page=soup.find(class_='CurrentPage'+str(pagecount)).get('href')
-        
+        #job_page=soup.find(class_='CurrentPage'+str(pagecount)).get('href')##investigate
+        joblinklist=soup.select('.CurrentPage'+str(pagecount)+' a')
+        job_page=joblinklist[0].get('href')
+        print(job_page)
     #return accumdatalist
     
 if __name__=='__main__':
