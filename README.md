@@ -16,4 +16,6 @@ Is a program that loops to ask if the user wants to re-run a program or not. Sin
 This program searches all text files within a specified folder for a user-supplied regular expression. It then returns all matches for each text file and prints it to the screen.
 
 ## scrapedatajobpostings.py
-This program scrapes hk.jobsdb.com/hk for job listings under the search term 'data' and experience level 'entry level'. It gathers all the links on each page to each posting, then scrapes each listing for all the relevant information and stores it in a dictionary. Finally, a CSV file containing the title, company name, company information and job posting details (responsibilities and requirements) is outputted.
+This program scrapes jobsdb.com for job listings. It gathers all the links on each page to each posting, then scrapes each listing for all the relevant information and stores it in a dictionary. Finally, a CSV file containing the date, title, company name, company information and job posting details (responsibilities and requirements) is outputted.
+
+To use: (you will need to have following modules): requests, beautiful soup 4, os, time and csv modules
