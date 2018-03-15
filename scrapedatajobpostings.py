@@ -1,37 +1,54 @@
 """
 Created on Sat Mar 10 23:36:40 2018
 
+This program scrapes jobsdb.com for job listings.
+It gathers all the links on each page to each posting,
+then scrapes each listing for all the relevant information and
+stores it in a dictionary. Finally, a CSV file containing the date,
+title, company name, company information and job posting details
+(responsibilities and requirements) is outputted.
+
 @author: Andy Poon
 """
 import requests,os,bs4,time,csv
 
 def page(page_url):
+    '''
+    This function receives a the url of the main job listings page.
+    then it loops through the page collecting a list of all the job postings links.
+    After collecting the links it loops through each job posting link and writes the
+    data into a CSV file as 1 row of data. This function repeats this for every link
+    on the main page.
+    '''
+    
     headers={'user-agent':'''Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36'''
             }
-    res=requests.get(page_url,headers=headers,timeout=5)
+    res=requests.get(page_url,headers=headers,timeout=10)
     res.raise_for_status()
     linkSoup=bs4.BeautifulSoup(res.text,"html.parser")
     
-    
+    #get the links to each job posting from the main page    
     linkElems=linkSoup.select('.job-title a')
         
-    print("Scraping job listings for: "+str(page_url))
-    links=list()  #accumulated list of all job posting links
+    print("Scraping job listings for: "+str(page_url))#prints the current page url it is scraping
+    links=list()  
     
     for link in linkElems:
-        links.append(link.get('href'))
+        links.append(link.get('href'))#accumulated list of all job posting links
     data=dict()
     
     for e in links:  #loops through each job listing and writes data into csv file
 
-        res=requests.get(e,headers=headers,timeout=5)
+        res=requests.get(e,headers=headers,timeout=10)
         res.raise_for_status()
     
         soup=bs4.BeautifulSoup(res.text,"html.parser")
         
         
         data['url']=data.get('url',e)
-        
+#these if statements checks each tag if it exists
+#jobsDB has listings that sometimes have no company name, etc. so I have added
+#if statements to check for each tag that I am searching for to avoid an error
         if soup.find(itemprop='title')!=None:
             title=soup.find(itemprop='title').text
         else:
@@ -73,14 +90,16 @@ def page(page_url):
         
         data.clear()
         time.sleep(1)
-        
-    
-    #return datalist
 
-def looppages(current_page):  
+def looppages(current_page):
+    '''
+    Receives a url of the main listings page, which is the first page to be looped
+    This function calls the page() function defined above for each page and loops
+    through all the pages
+    '''
     pagecount=0
     
-    while pagecount<5: # total number of pages=5
+    while pagecount<7: # total number of pages
         
         page(current_page)
         
@@ -91,9 +110,10 @@ def looppages(current_page):
      
     
 if __name__=='__main__':
-    job_page="https://hk.jobsdb.com/hk/jobs/entry-level?AD=30&Blind=1&Career=4&Host=J%2cS&JobCat=1&JSRV=1&Key=data&KeyOpt=COMPLEX&SearchFields=Positions%2cCompanies&page=0"
+    job_page="https://sg.jobsdb.com/sg/jobs/entry-level?AD=30&Blind=1&Career=4&Host=J%2cS&JobCat=1&JSRV=1&Key=data&KeyOpt=COMPLEX&SearchFields=Positions%2cCompanies&page=0"
     
     original_path=os.getcwd()
+    #set your path for output of the CSV file
     target_path=r"C:\Users\Andy\Documents\Coding stuff\Projects"
     os.chdir(target_path)
     
