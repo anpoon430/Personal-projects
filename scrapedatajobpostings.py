@@ -93,7 +93,7 @@ def page(page_url):
         data.clear()
         time.sleep(1)
 
-def looppages(current_page):
+def looppages(current_page,number_of_pages):
     '''
     Receives a url of the main listings page, which is the first page to be looped
     This function calls the page() function defined above for each page and loops
@@ -101,7 +101,7 @@ def looppages(current_page):
     '''
     pagecount=0
     
-    while pagecount<7: # total number of pages
+    while pagecount<number_of_pages: # total number of pages
         
         page(current_page)
         
@@ -114,14 +114,15 @@ def looppages(current_page):
 if __name__=='__main__':
     start=time.clock()
     
-    job_page="https://sg.jobsdb.com/sg/jobs/entry-level?AD=30&Blind=1&Career=4&Host=J%2cS&JobCat=1&JSRV=1&Key=data&KeyOpt=COMPLEX&SearchFields=Positions%2cCompanies&page=0"
+    job_page="https://hk.jobsdb.com/hk/jobs/entry-level?AD=30&Blind=1&Career=4&Host=J%2cS&JSRV=1&Key=data&KeyOpt=COMPLEX&SearchFields=Positions%2cCompanies&page=0"
+    totalpages=input('How many pages?')
     
     original_path=os.getcwd()
     #set your path for output of the CSV file
     target_path=r"C:\Users\Andy\Documents\Coding stuff\Projects"
     os.chdir(target_path)
     
-    looppages(job_page)    
+    looppages(job_page,totalpages)    
     path=os.chdir(original_path)
     
     print('finished')
