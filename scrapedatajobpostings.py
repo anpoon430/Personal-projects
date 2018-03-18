@@ -37,6 +37,8 @@ def page(page_url):
         links.append(link.get('href'))#accumulated list of all job posting links
     data=dict()
     
+    
+    
     for e in links:  #loops through each job listing and writes data into csv file
 
         res=requests.get(e,headers=headers,timeout=10)
@@ -110,6 +112,8 @@ def looppages(current_page):
      
     
 if __name__=='__main__':
+    start=time.clock()
+    
     job_page="https://sg.jobsdb.com/sg/jobs/entry-level?AD=30&Blind=1&Career=4&Host=J%2cS&JobCat=1&JSRV=1&Key=data&KeyOpt=COMPLEX&SearchFields=Positions%2cCompanies&page=0"
     
     original_path=os.getcwd()
@@ -118,7 +122,11 @@ if __name__=='__main__':
     os.chdir(target_path)
     
     looppages(job_page)    
+    path=os.chdir(original_path)
     
     print('finished')
     
-    path=os.chdir(original_path)
+    print('Time elapsed: '+str(time.clock()-start)+' seconds')
+    
+    
+    
