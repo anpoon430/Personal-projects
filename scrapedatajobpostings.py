@@ -114,8 +114,8 @@ def looppages(current_page,number_of_pages):
 if __name__=='__main__':
     start=time.clock()
     
-    job_page="https://hk.jobsdb.com/hk/jobs/entry-level?AD=30&Blind=1&Career=4&Host=J%2cS&JSRV=1&Key=data&KeyOpt=COMPLEX&SearchFields=Positions%2cCompanies&page=0"
-    totalpages=input('How many pages?')
+    job_page="https://hk.jobsdb.com/HK/EN/Search/FindJobs?KeyOpt=COMPLEX&JSRV=1&RLRSF=1&JobCat=1&SearchFields=Positions,Companies&Key=banker&JSSRC=HPAS"
+    totalpages=int(input('How many pages?'))
     
     original_path=os.getcwd()
     #set your path for output of the CSV file
